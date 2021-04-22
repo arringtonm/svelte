@@ -6,10 +6,12 @@ import EachBlock from './EachBlock';
 import Element from './Element/index';
 import Head from './Head';
 import IfBlock from './IfBlock';
+import KeyBlock from './KeyBlock';
 import InlineComponent from './InlineComponent/index';
 import MustacheTag from './MustacheTag';
 import RawMustacheTag from './RawMustacheTag';
 import Slot from './Slot';
+import SlotTemplate from './SlotTemplate';
 import Text from './Text';
 import Title from './Title';
 import Window from './Window';
@@ -17,6 +19,7 @@ import { INode } from '../../nodes/interfaces';
 import Renderer from '../Renderer';
 import Block from '../Block';
 import { trim_start, trim_end } from '../../../utils/trim';
+import { link } from '../../../utils/link';
 import { Identifier } from 'estree';
 
 const wrappers = {
@@ -29,19 +32,16 @@ const wrappers = {
 	Head,
 	IfBlock,
 	InlineComponent,
+	KeyBlock,
 	MustacheTag,
 	Options: null,
 	RawMustacheTag,
 	Slot,
+	SlotTemplate,
 	Text,
 	Title,
 	Window
 };
-
-function link(next: Wrapper, prev: Wrapper) {
-	prev.next = next;
-	if (next) next.prev = prev;
-}
 
 function trimmable_at(child: INode, next_sibling: Wrapper): boolean {
 	// Whitespace is trimmable if one of the following is true:
@@ -71,7 +71,7 @@ export default class FragmentWrapper {
 			const child = nodes[i];
 
 			if (!child.type) {
-				throw new Error(`missing type`);
+				throw new Error('missing type');
 			}
 
 			if (!(child.type in wrappers)) {

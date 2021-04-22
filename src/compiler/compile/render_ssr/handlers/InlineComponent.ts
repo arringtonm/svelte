@@ -1,6 +1,5 @@
 import { string_literal } from '../../utils/stringify';
 import Renderer, { RenderOptions } from '../Renderer';
-import { get_slot_scope } from './shared/get_slot_scope';
 import InlineComponent from '../../nodes/InlineComponent';
 import { p, x } from 'code-red';
 
@@ -67,19 +66,14 @@ export default function(node: InlineComponent, renderer: Renderer, options: Rend
 
 	const slot_fns = [];
 
-	if (node.children.length) {
+	const children = node.children;
+
+	if (children.length) {
 		const slot_scopes = new Map();
 
-		renderer.push();
-
-		renderer.render(node.children, Object.assign({}, options, {
+		renderer.render(children, Object.assign({}, options, {
 			slot_scopes
 		}));
-
-		slot_scopes.set('default', {
-			input: get_slot_scope(node.lets),
-			output: renderer.pop()
-		});
 
 		slot_scopes.forEach(({ input, output }, name) => {
 			slot_fns.push(
